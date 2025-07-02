@@ -1,6 +1,7 @@
 import pandas as pd
-from itertools import chain, combinations
+from itertools import combinations
 from concept import Concept
+from concept_lattice import ConceptLattice
 
 
 class Context:
@@ -31,9 +32,9 @@ class Context:
 
         """Returns the power set of the DataFrame's rows."""
         objects = self.get_extents()
-        #print("Objects:", objects)
+        # print("Objects:", objects)
         power_list = []
-        for r in range(len(objects)+1):
+        for r in range(1,len(objects)+1):
             for item in combinations(objects, r):
                 element = set(item)
                 power_list.append(element)  
@@ -79,6 +80,7 @@ class Context:
                     derivative = derivative.intersection(features)
 
             return derivative
+        
         elif set1.issubset(self.get_intents()):
             for index, element in enumerate(set1):
                 features = self._objects_shared(element)
@@ -95,18 +97,22 @@ class Context:
         remember that a concept is a pair (A, B) where A' = B and B' = A"""
 
         power_set = self.get_powerSet()
+        print("Power Set:", power_set)
         concepts = []
         for extent in power_set:
-            print("Extent:", extent)
+            # print("Extent:", extent)
             intent = self.Differentiate(extent)
-            print("Intent:", intent)
+            # print("Intent:", intent)
             double_derivative = self.Differentiate(intent)
-            print("Double Derivative:", double_derivative)
+            # print("Double Derivative:", double_derivative)
             if double_derivative == extent:
-                print("Concept found: Extent:", extent, "Intent:", intent)
+                # print("Concept found: Extent:", extent, "Intent:", intent)
                 concepts.append(Concept(extent, intent))
+        
+        concept_lattice = ConceptLattice(concepts)
 
-        return concepts
+        return concept_lattice
+    
             
     
 
