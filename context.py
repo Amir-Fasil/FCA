@@ -30,7 +30,9 @@ class Context:
     
     def get_powerSet(self):
 
-        """Returns the power set of the DataFrame's rows."""
+        """Returns the power set of the DataFrame's rows, Taking objects and returns 
+        the power set of the objects which will be used to extract concepts """
+
         objects = self.get_extents()
         # print("Objects:", objects)
         power_list = []
@@ -41,6 +43,7 @@ class Context:
         return power_list
     
     def _feature_contained(self, object):
+
         """ It accept an object and it returns a set of features that the object contains"""
         features = set()
         row_Series = self.data.loc[object]  # This is a Series
@@ -55,6 +58,7 @@ class Context:
         return features
     
     def _objects_shared(self, feature):
+
         """ It accepts a feature and returns a set of objects that share the feature"""
         objects = set()
         column_Series = self.data[feature] # This is a Series
@@ -93,6 +97,7 @@ class Context:
 
     
     def extract_concepts(self):
+        
         """From the context, extract all the concepts
         remember that a concept is a pair (A, B) where A' = B and B' = A"""
 

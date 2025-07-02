@@ -34,8 +34,5 @@ import pandas as pd
 dataframe2 = pd.read_csv("test_df.csv")
 dataframe2.drop(columns=dataframe2.columns[0], inplace=True)  # Drop the first unnamed column
 context2 = Context(dataframe2)
-print("Dataframe2:\n", dataframe2)
-print("Differentiation of {A, B}:", context2.Differentiate({"A", "B"}))
 concepts2 = context2.extract_concepts()
-print("Extracted Concepts:", concepts2.get_proper_concept())
 print("Ordered_lattice", concepts2.get_lattice())
