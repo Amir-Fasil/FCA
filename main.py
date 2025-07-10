@@ -31,8 +31,10 @@ import pandas as pd
 # Harriet : 4
 
 
-dataframe2 = pd.read_csv("test_df.csv")
+dataframe2 = pd.read_csv("test2.csv")
 dataframe2.drop(columns=dataframe2.columns[0], inplace=True)  # Drop the first unnamed column
 context2 = Context(dataframe2)
 concepts2 = context2.extract_concepts()
-print("Ordered_lattice", concepts2.get_lattice())
+#print("Extracted Concepts:", concepts2.get_concept_lattice())
+concepts2.set_cover()
+# concepts2.get_lattice()

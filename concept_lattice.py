@@ -1,12 +1,13 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from collections import defaultdict
+from itertools import combinations
 
+class ConceptLattice():
 
-class ConceptLattice:
+    def __init__(self, concepts: list, context):
 
-    def __init__(self, concepts: list):
-
+        self.context = context
         self.conceptLattice = concepts
         self.length = len(concepts)  # I can use this to quantify the number of node I need.
 
@@ -26,6 +27,58 @@ class ConceptLattice:
 
         return proper_concepts
     
+
+    def basis_attribute(self, attributes):
+        
+        intent_power_set = self.context.get_powerSet(attributes)
+        bassis_attributes = set()
+        for elements in intent_power_set:
+            #print("Elements:", elements)
+            if len(elements) == 0 and len(elements) == len(attributes):
+                continue
+            first_derv = self.context.Differentiate(elements)
+            second_derv = self.context.Differentiate(first_derv)
+            #print("Second Derivative:", second_derv)
+            if elements != second_derv:   # This checks if A = A'' and for an attribute to be a basis attribute it must not be equal to its second derivative.
+                 # They need not to be a single attribute they can be a subset of the total attributes.
+                sub_power_set = self.context.get_powerSet(elements)
+                psdeo_intent_flag = True
+                for sub_elements in sub_power_set:
+                    if len(sub_elements) == 0 and len(sub_elements) == len(elements):
+                        continue
+                    sub_first_derv = self.context.Differentiate(sub_elements)
+                    sub_second_derv = self.context.Differentiate(sub_first_derv)
+                    #print(f"Sub Element: {sub_elements}, Sub Second Derivative: {sub_second_derv}, and Elements: {elements}")
+                    if sub_second_derv.issubset(elements):
+                        psdeo_intent_flag = False
+                        break
+
+                if psdeo_intent_flag:
+                    bassis_attributes = bassis_attributes.union(elements)
+                    print("TRUE")
+
+        return bassis_attributes
+    
+
+    def set_cover(self):
+
+        """This function is ment to give necessary varibales for building 
+        QUBO modeld to solve minimum set cover for our concept lattice """
+
+        proper_lattice = self._get_proper_concept()
+        intents = self.context.get_intents()
+        #print("Intents:", intents)
+        basis_attributes = self.basis_attribute(intents)
+        print("Basis Attributes:", basis_attributes)
+
+
+
+            
+
+
+
+        
+    
     def get_lattice(self):
 
         """This function returns the concept lattice(Graphs)."""
@@ -36,18 +89,15 @@ class ConceptLattice:
         G = nx.Graph()
         G.add_nodes_from(concept_nodes)
 
-
         for i, (e1, i1) in enumerate(concept_nodes):
             for j, (e2, i2) in enumerate(concept_nodes):
                 if i != j and i1 > i2 and len(i1) == len(i2) + 1:
                     G.add_edge((e1, i1), (e2, i2))
 
-
         levels = defaultdict(list)
         for concept in concept_nodes:
             level = len(concept[1]) 
             levels[level].append(concept)
-
  
         pos = {}
         for level, nodes_at_level in sorted(levels.items(), reverse=True):  

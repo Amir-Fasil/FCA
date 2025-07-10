@@ -28,12 +28,12 @@ class Context:
         """Returns the columns of the DataFrame."""
         return set(self.data.columns)
     
-    def get_powerSet(self):
+    def get_powerSet(self, objects):
 
         """Returns the power set of the DataFrame's rows, Taking objects and returns 
         the power set of the objects which will be used to extract concepts """
 
-        objects = self.get_extents()
+        # objects = self.get_extents()
         # print("Objects:", objects)
         power_list = []
         for r in range(1,len(objects)+1):
@@ -95,14 +95,13 @@ class Context:
 
             return derivative
 
-    
     def extract_concepts(self):
-        
+
         """From the context, extract all the concepts
         remember that a concept is a pair (A, B) where A' = B and B' = A"""
 
-        power_set = self.get_powerSet()
-        print("Power Set:", power_set)
+        power_set = self.get_powerSet(self.get_extents())
+        #print("Power Set:", power_set)
         concepts = []
         for extent in power_set:
             # print("Extent:", extent)
@@ -114,9 +113,13 @@ class Context:
                 # print("Concept found: Extent:", extent, "Intent:", intent)
                 concepts.append(Concept(extent, intent))
         
-        concept_lattice = ConceptLattice(concepts)
+        concept_lattice = ConceptLattice(concepts, self)
 
         return concept_lattice
+    
+    def __str__(self):
+        """String representation of the context."""
+        return f"Context with {len(self.data)} objects and {len(self.data.columns)} features."
     
             
     
