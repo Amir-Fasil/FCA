@@ -60,16 +60,35 @@ class ConceptLattice():
         return bassis_attributes
     
 
+    def qubo_matrix(self, set_cost, A):
+        
+        pass
+
     def set_cover(self):
 
         """This function is ment to give necessary varibales for building 
-        QUBO modeld to solve minimum set cover for our concept lattice """
+        QUBO model to solve minimum set cover for our concept lattice """
 
-        proper_lattice = self._get_proper_concept()
+        corresponding_concepts = self.conceptLattice
+        universal_extent = set.union(*extent_sets) if extent_sets else set()
+        
+        ############ Cost Matrix ############
         intents = self.context.get_intents()
-        #print("Intents:", intents)
         basis_attributes = self.basis_attribute(intents)
-        print("Basis Attributes:", basis_attributes)
+        extent_sets = [concept.get_extent() for concept in self.conceptLattice]
+        corresponding_intents = [concept.get_intent() for concept in self.conceptLattice]
+        set_cost = [(len(basis_attributes) - len(basis_attributes.intersection(S))) for S in corresponding_intents]
+
+        ########### Coverage Penality Matrix ###########
+        A = max(set_cost) + 1
+
+        ########### Expanding Cost Function ###########
+
+        Q = qubo_matrix(set_cost, A)
+
+
+
+
 
 
 
