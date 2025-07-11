@@ -36,5 +36,5 @@ dataframe2.drop(columns=dataframe2.columns[0], inplace=True)  # Drop the first u
 context2 = Context(dataframe2)
 concepts2 = context2.extract_concepts()
 #print("Extracted Concepts:", concepts2.get_concept_lattice())
-concepts2.set_cover()
+print(concepts2.set_cover())
 # concepts2.get_lattice()

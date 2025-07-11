@@ -2,6 +2,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from itertools import combinations
+import numpy as np
+import pandas as pd
 
 class ConceptLattice():
 
@@ -55,39 +57,36 @@ class ConceptLattice():
 
                 if psdeo_intent_flag:
                     bassis_attributes = bassis_attributes.union(elements)
-                    print("TRUE")
+                    #print("TRUE")
 
         return bassis_attributes
-    
-
-    def qubo_matrix(self, set_cost, A):
-        
-        pass
 
     def set_cover(self):
 
         """This function is ment to give necessary varibales for building 
         QUBO model to solve minimum set cover for our concept lattice """
-
-        corresponding_concepts = self.conceptLattice
-        universal_extent = set.union(*extent_sets) if extent_sets else set()
         
         ############ Cost Matrix ############
         intents = self.context.get_intents()
-        basis_attributes = self.basis_attribute(intents)
+
+        basis_attributes = self.basis_attribute(intents)  # Custom defined cost
         extent_sets = [concept.get_extent() for concept in self.conceptLattice]
         corresponding_intents = [concept.get_intent() for concept in self.conceptLattice]
         set_cost = [(len(basis_attributes) - len(basis_attributes.intersection(S))) for S in corresponding_intents]
-
-        ########### Coverage Penality Matrix ###########
         A = max(set_cost) + 1
+        corresponding_concepts = self.conceptLattice  # A list of concept objects
+        universal_extent = set.union(*extent_sets) if extent_sets else set()
+        element_contained = [len(universal_extent.intersection(extent_sets[i])) for i in range(len(extent_sets))]
+        Q = np.zeros((len(corresponding_concepts), len(corresponding_concepts)))
+        for i in range(len(corresponding_concepts)):
+            for j in range(len(corresponding_concepts)):
+                if i == j:
+                    Q[i][j] = set_cost[i] - A * element_contained[i]
+                else:
+                    element_shared = len(extent_sets[i].intersection(extent_sets[j]))
+                    Q[i][j] = - A * element_shared
 
-        ########### Expanding Cost Function ###########
-
-        Q = qubo_matrix(set_cost, A)
-
-
-
+        return Q
 
 
 
