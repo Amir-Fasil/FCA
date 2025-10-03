@@ -84,7 +84,7 @@ class ConceptLattice():
                     Q[i][j] = set_cost[i] - A * element_contained[i]
                 else:
                     element_shared = len(extent_sets[i].intersection(extent_sets[j]))
-                    Q[i][j] = - A * element_shared
+                    Q[i][j] = A * element_shared
 
         return Q
 
