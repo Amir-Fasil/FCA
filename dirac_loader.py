@@ -9,7 +9,7 @@ client = qc.QciClient()
 # ----------------------------
 # Step 1: Load data
 # ----------------------------
-dataframe2 = pd.read_csv("test_df.csv")
+dataframe2 = pd.read_csv("test2.csv")
 dataframe2.drop(columns=dataframe2.columns[0], inplace=True)
 
 # Build FCA context
@@ -48,13 +48,18 @@ poly = Poly(qubo_expr, *c)
 poly_coefs = []
 poly_indices = []
 
-for monom, coeff in poly.terms():
-    poly_coefs.append(float(coeff))
-    term_indices = []
-    # 1-based indexing
-    for var_index, exp in enumerate(monom, start=1):
-        term_indices.extend([var_index] * exp)
-    poly_indices.append(term_indices)
+for i in range(num_concepts):
+    for j in range(num_concepts):
+        coeff = Q[i, j]
+        if coeff != 0:
+            if i == j:
+                # Diagonal term → [0, i+1]
+                idx = [0, i + 1]
+            else:
+                # Off-diagonal → [i+1, j+1] (always sorted ascending)
+                idx = sorted([i + 1, j + 1])
+            poly_indices.append(idx)
+            poly_coefs.append(float(coeff))
 
 print("\nPolynomial Coefficients:")
 print(poly_coefs)
@@ -72,7 +77,7 @@ file_int_problem = {
     "file_config": {
         "polynomial": {
             "num_variables": num_concepts,   # number of variables (concepts)
-            "min_degree": 2,                 
+            "min_degree": 1,                 
             "max_degree": 2,
             "data": data_int_problem,
         }
@@ -89,7 +94,7 @@ job_body_int_problem = client.build_job_body(
     job_name='test_qubo_job',
     job_params={
         'device_type': 'dirac-3',
-        'num_samples': 1,                   # if request multiple samples make more that 1 
+        'num_samples': 2,                   # if request multiple samples make more that 1 
         'relaxation_schedule': 1,
         'num_levels': [2] * num_concepts
                 # binary vars
