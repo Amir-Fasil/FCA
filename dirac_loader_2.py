@@ -3,22 +3,24 @@ import pandas as pd
 import numpy as np
 from sympy import symbols, Poly
 import qci_client as qc
+import time
 
 client = qc.QciClient()
 
 
 # Step 1: Load data
 
-dataframe2 = pd.read_csv("test2.csv")
+dataframe2 = pd.read_csv("test4.csv")
 dataframe2.drop(columns=dataframe2.columns[0], inplace=True)
 
 # Build FCA context
 context2 = Context(dataframe2)
 concepts2 = context2.extract_concepts()
+print(f"number of concepts: {concepts2.get_number_of_concepts()}")
 
 # Step 2: Get multibody matrix
 
-Q= concepts2.set_cover()
+Q = concepts2.set_cover()
 
 num_concepts = Q.shape[0]
 
@@ -75,14 +77,37 @@ poly_file = {"file_name": "test-polynomial",
              }}}
 file_id = client.upload_file(file=poly_file)["file_id"]
 
-
+start_time = time.time()
 job_body = client.build_job_body(
        job_type="sample-hamiltonian", 
-       polynomial_file_id=file_id, 
+       polynomial_file_id = file_id, 
        job_params={"device_type": "dirac-3", 
        "sum_constraint": num_concepts, "relaxation_schedule": 1, "num_samples":1 })
 
 response = client.process_job(job_body=job_body)
+print(f"\nTotal execution time: {time.time() - start_time:.2f} seconds")
+
+full_concepts = concepts2.get_proper_concept()
+
+result = response['results']['solutions'][0]
+sorted_indices = np.argsort(result)[::-1].tolist()
+print("\nresult", result)
+print("\nsorted indices: ", sorted_indices)
+msc_concepts = [full_concepts[i] for i in sorted_indices[:32]]
+print("\nMinimum Set Cover Concepts:")
+print(msc_concepts)
+msc_intents = [set(i[1]) for i in msc_concepts]
+print("\nIntents of Minimum Set Cover Concepts:")
+print(msc_intents)
+basis_attributes = concepts2.basis_attribute(context2.get_intents())
+print("\nBasis Attributes:")
+print(basis_attributes)
+shared_intents = [len(msc_intents[i].intersection(basis_attributes)) for i in range(len(msc_intents))]
+print("\nNumber of basis attributes in each intent:")
+print(shared_intents)
+total_shared = sum(shared_intents)
+print("\nTotal number of basis attributes in all intents:")
+print(total_shared)
 
 print("Found solutions:")
 print(response['results']['solutions'])

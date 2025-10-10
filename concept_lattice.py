@@ -13,12 +13,15 @@ class ConceptLattice():
         self.conceptLattice = concepts
         self.length = len(concepts)  # I can use this to quantify the number of node I need.
 
+    def get_number_of_concepts(self):
+        return self.length
+
     def get_concept_lattice(self):
 
         """This just returns a list of the concepts."""
         return self.conceptLattice
 
-    def _get_proper_concept(self):
+    def get_proper_concept(self):
 
         """This function retruns a list of concepts that are 
         tuples instead of Concept objects
@@ -87,21 +90,12 @@ class ConceptLattice():
                     Q[i][j] = A * element_shared
 
         return Q
-
-
-
-
-            
-
-
-
-        
     
     def get_lattice(self):
 
         """This function returns the concept lattice(Graphs)."""
 
-        concepts = self._get_proper_concept()
+        concepts = self.get_proper_concept()
         concept_nodes = [(frozenset(extent), frozenset(intent)) for (extent, intent) in concepts]
 
         G = nx.Graph()

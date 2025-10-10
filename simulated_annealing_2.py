@@ -2,14 +2,16 @@ import pandas as pd
 import numpy as np
 import random, math
 from context import Context
+import time
 
 # Step 1: Load data & build Q
 
-dataframe2 = pd.read_csv("test2.csv")
+dataframe2 = pd.read_csv("test4.csv")
 dataframe2.drop(columns=dataframe2.columns[0], inplace=True)
 
 context2 = Context(dataframe2)
 concepts2 = context2.extract_concepts()
+print(f"number of concepts: {concepts2.get_number_of_concepts()}")
 Q = np.array(concepts2.set_cover(), dtype=float)
 
 num_concepts = Q.shape[0]
@@ -52,6 +54,8 @@ def repair(weights):
 
 def simulated_annealing(linear, quad, T0=1000, cool=0.95, minT=1e-6,
                         outer_iters=100, inner_iters=20, step_frac=0.05):
+    
+    start_time = time.time()
     w = repair(np.random.uniform(0, num_concepts, len(linear)))
     e = objective(w, linear, quad)
     best_w, best_e = w.copy(), e
@@ -81,8 +85,9 @@ def simulated_annealing(linear, quad, T0=1000, cool=0.95, minT=1e-6,
         if T < minT:
             print("\nTemperature too low — stopping early.")
             break
-
+    runtime = time.time() - start_time
     print("\n=== Final Results ===")
+    print(f"RuneTime: {runtime:.2f} sec")
     print(f"Best energy: {best_e:.4f}")
     print(f"Best weights sum: {np.sum(best_w):.4f} (target: {num_concepts})")
     print(f"Best weights: {np.round(best_w, 4)}")
@@ -93,5 +98,5 @@ def simulated_annealing(linear, quad, T0=1000, cool=0.95, minT=1e-6,
 # Step 4: Run it
 weights, energy = simulated_annealing(
     linear_terms, quadratic_matrix,
-    T0=1000, cool=0.9995, outer_iters=1000, inner_iters=10000, step_frac=0.05
+    T0=10000, cool = 0.9995, outer_iters=1000, inner_iters=10000, step_frac= 0.1
 )

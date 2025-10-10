@@ -1,0 +1,11 @@
+Object,Mammal,Carnivore,Domestic,HasTail,Fur,CanFly,Aquatic,Herbivore
+Dog,1,1,1,1,1,0,0,0
+Cat,1,1,1,1,1,0,0,0
+Cow,1,0,1,1,1,0,0,1
+Horse,1,0,1,1,1,0,0,1
+Rabbit,1,0,1,1,1,0,0,1
+Eagle,0,1,0,1,0,1,0,0
+Parrot,0,0,0,1,0,1,0,0
+Dolphin,1,1,0,1,0,0,1,0
+Shark,0,1,0,1,0,0,1,0
+Bat,1,1,0,1,1,1,0,0

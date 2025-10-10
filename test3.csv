@@ -1,0 +1,16 @@
+Object,Electrical,Portable,Kitchen,Digital,Mechanical,Fragile,Heavy,Battery,Wireless,Smart
+Toaster,1,0,1,0,1,0,0,0,0,0
+Blender,1,1,1,0,1,0,0,0,0,0
+Laptop,1,1,0,1,0,1,0,1,1,1
+Smartphone,1,1,0,1,0,1,0,1,1,1
+VacuumCleaner,1,0,0,0,1,0,1,0,0,0
+Refrigerator,1,0,1,0,1,0,1,0,0,0
+Microwave,1,0,1,0,1,0,1,0,0,0
+Camera,1,1,0,1,0,1,0,1,1,0
+ElectricKettle,1,1,1,0,1,0,0,0,0,0
+Fan,1,1,0,0,1,0,0,0,0,0
+Drill,1,1,0,0,1,0,0,1,0,0
+Television,1,0,0,1,0,1,1,0,1,1
+Lamp,1,1,0,0,0,1,0,0,0,0
+Headphones,1,1,0,1,0,0,0,1,1,0
+HairDryer,1,1,0,0,1,0,0,0,0,0
